@@ -3,40 +3,53 @@
 namespace App\Service;
 
 use App\DTO\PaymentRequestDTO;
+use App\DTO\PaymentResponseDTO;
 use App\Factory\PaymentAdapterFactory;
 use App\Factory\PaymentMethodFactory;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PaymentService
 {
-    public function __construct(protected ValidatorInterface $validator)
+    public function __construct(protected DataValidator $dataValidator)
     {
     }
 
     public function processPayment(string $paymentType, array $request)
     {
-        // validate data
-        // complete DTO definition & update response
         // try catch handling
         // use logger where needed
-        // update params, use all the request params properly instead of hard coded data
-        // command for payment processing
         $paymentRequestData = new PaymentRequestDTO();
         $paymentRequestData
             ->setAmount((float)$request['amount'] ?? null)
             ->setCurrency($request['currency'] ?? '')
+            ->setCardNumber($request['cardNumber'] ?? '')
+            ->setCardExpYear($request['cardExpYear'] ?? null)
+            ->setCardExpMonth($request['cardExpMonth'] ?? null)
+            ->setCardCvv($request['cardCvv'] ?? null)
         ;
 
-        $errors = $this->validator->validate($paymentRequestData);
-
-        dump($errors);exit;
-
+        $this->dataValidator->validateData($paymentRequestData);
         $paymentMethod = PaymentMethodFactory::getPaymentMethod($paymentType);
         $initialData = $paymentMethod->initiatePayment($paymentRequestData);
-        //dump($initialData);exit;
+        //dump($initialData);
+        //exit;
         $paymentMethodAdapter = PaymentAdapterFactory::getPaymentAdapter($paymentType);
         $paymentDetails = $paymentMethodAdapter->convertPaymentDetailsToDTO($initialData);
         //dump($paymentDetails);
-        return $paymentDetails;
+        return $this->findPaymentResponse($paymentDetails);
+    }
+
+    private function findPaymentResponse(PaymentResponseDTO $paymentDetails): array
+    {
+        return [
+            'transactionId' => $paymentDetails->getTransactionId(),
+            'dateOfCreating' => $paymentDetails->getDateOfCreating(),
+            'amount' => $paymentDetails->getAmount(),
+            'currency' => $paymentDetails->getCurrency(),
+            'cardDetails' => [
+                'cardBin' => $paymentDetails->getCardDetails()->getCardBin(),
+                'cardExpYear' => $paymentDetails->getCardDetails()->getCardExpYear(),
+                'cardExpMonth' => $paymentDetails->getCardDetails()->getCardExpMonth()
+            ]
+        ];
     }
 }

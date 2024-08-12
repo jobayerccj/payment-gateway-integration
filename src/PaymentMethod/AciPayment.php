@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Controller\PaymentMethod;
+namespace App\PaymentMethod;
 
 use App\DTO\PaymentRequestDTO;
-use App\DTO\PaymentResponseDTO;
 use App\Interface\PaymentMethod;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
@@ -27,11 +25,11 @@ class AciPayment implements PaymentMethod
                     'currency' => $paymentRequestDTO->getCurrency(),
                     'paymentBrand' => 'VISA',
                     'paymentType' => 'DB',
-                    'card.number' => 4200000000000000,
+                    'card.number' => $paymentRequestDTO->getCardNumber(),
                     'card.holder' => 'Jane Jones',
-                    'card.expiryMonth' => '05',
-                    'card.expiryYear' => 2034,
-                    'card.cvv' => 123
+                    'card.expiryMonth' => $paymentRequestDTO->getCardExpMonth(),
+                    'card.expiryYear' => $paymentRequestDTO->getCardExpYear(),
+                    'card.cvv' => $paymentRequestDTO->getCardCvv()
                 ],
                 'headers' => [
                     'Authorization' => "Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg=",

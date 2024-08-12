@@ -2,9 +2,7 @@
 
 namespace App\Command;
 
-use App\Factory\PaymentMethodFactory;
 use App\Service\PaymentService;
-use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -32,7 +30,6 @@ class PaymentCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $output->writeln($input->getArgument('paymentType') . ' is selected');
             $paymentType = $input->getArgument('paymentType');
             $paymentData = $input->getArgument('paymentData');
 
@@ -43,12 +40,11 @@ class PaymentCommand extends Command
             }
 
             $result = $this->paymentService->processPayment($paymentType, $processedData);
-            $output->writeln("amount: " . $result['amount']);
-            $output->writeln("amount: " . $result['currency']);
+            $output->writeln(print_r($result, true));
             return Command::SUCCESS;
         } catch (RequestException $exc) {
             $errorDetails = json_decode($exc->getResponse()->getBody()->getContents(), true);
-
+            dump($errorDetails, $exc);
             // should use adapter for managing different payment errors
             $output->writeln($errorDetails['result']['description']);
             return Command::INVALID;

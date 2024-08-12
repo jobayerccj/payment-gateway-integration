@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\PaymentMethod;
+namespace App\PaymentMethod;
 
 use App\DTO\PaymentRequestDTO;
 use App\Interface\PaymentMethod;
@@ -20,9 +20,9 @@ class Shift4Payment implements PaymentMethod
                 ->amount($paymentRequestDTO->getAmount())
                 ->currency($paymentRequestDTO->getCurrency())
                 ->card([
-                        'number' => '4242424242424242',
-                        'expMonth' => 11,
-                        'expYear' => 2026
+                        'number' => $paymentRequestDTO->getCardNumber(),
+                        'expMonth' => $paymentRequestDTO->getCardExpMonth(),
+                        'expYear' => $paymentRequestDTO->getCardExpYear()
                     ]
                 );
 

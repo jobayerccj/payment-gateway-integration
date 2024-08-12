@@ -2,9 +2,9 @@
 
 namespace App\Factory;
 
-use App\Controller\PaymentMethod\AciPayment;
-use App\Controller\PaymentMethod\Shift4Payment;
 use App\Interface\PaymentMethod;
+use App\PaymentMethod\AciPayment;
+use App\PaymentMethod\Shift4Payment;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PaymentMethodFactory

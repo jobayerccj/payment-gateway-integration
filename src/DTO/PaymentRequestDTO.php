@@ -13,16 +13,16 @@ class PaymentRequestDTO
     private string $currency;
 
     #[Assert\NotBlank]
-    private int $cardNumber;
+    private string $cardNumber;
 
     #[Assert\NotBlank]
     private int $cardExpYear;
 
     #[Assert\NotBlank]
-    private int $cardExpMonth;
+    private string $cardExpMonth;
 
     #[Assert\NotBlank]
-    private int $cardCvv;
+    private string $cardCvv;
 
     /**
      * @return float
@@ -61,17 +61,17 @@ class PaymentRequestDTO
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getCardNumber(): int
+    public function getCardNumber(): string
     {
         return $this->cardNumber;
     }
 
     /**
-     * @param int $cardNumber
+     * @param string $cardNumber
      */
-    public function setCardNumber(int $cardNumber): self
+    public function setCardNumber(string $cardNumber): self
     {
         $this->cardNumber = $cardNumber;
 
@@ -97,17 +97,17 @@ class PaymentRequestDTO
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getCardExpMonth(): int
+    public function getCardExpMonth(): string
     {
         return $this->cardExpMonth;
     }
 
     /**
-     * @param int $cardExpMonth
+     * @param string $cardExpMonth
      */
-    public function setCardExpMonth(int $cardExpMonth): self
+    public function setCardExpMonth(string $cardExpMonth): self
     {
         $this->cardExpMonth = $cardExpMonth;
 
@@ -115,17 +115,17 @@ class PaymentRequestDTO
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getCardCvv(): int
+    public function getCardCvv(): string
     {
         return $this->cardCvv;
     }
 
     /**
-     * @param int $cardCvv
+     * @param string $cardCvv
      */
-    public function setCardCvv(int $cardCvv): self
+    public function setCardCvv(string $cardCvv): self
     {
         $this->cardCvv = $cardCvv;
 
