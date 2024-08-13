@@ -1,14 +1,14 @@
 <?php
 
-namespace App\PaymentMethod;
+namespace App\PaymentProcessor;
 
 use App\DTO\PaymentRequestDTO;
-use App\Interface\PaymentMethod;
+use App\Interface\PaymentProcessor;
 use Shift4\Exception\Shift4Exception;
 use Shift4\Request\ChargeRequest;
 use Shift4\Shift4Gateway;
 
-class Shift4Payment implements PaymentMethod
+class Shift4PaymentGateway implements PaymentProcessor
 {
     public function initiatePayment(PaymentRequestDTO $paymentRequestDTO)
     {

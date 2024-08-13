@@ -4,7 +4,7 @@ namespace App\Interface;
 
 use App\DTO\PaymentResponseDTO;
 
-interface PaymentAdapter
+interface PaymentProcessorAdapter
 {
     public function convertPaymentDetailsToDTO($initialData): ?PaymentResponseDTO;
 }

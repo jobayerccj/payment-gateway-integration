@@ -1,14 +1,13 @@
 <?php
 
-namespace App\PaymentMethod;
+namespace App\PaymentProcessor;
 
 use App\DTO\PaymentRequestDTO;
-use App\Interface\PaymentMethod;
+use App\Interface\PaymentProcessor;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
-class AciPayment implements PaymentMethod
+class AciPaymentGateway implements PaymentProcessor
 {
     public function initiatePayment(PaymentRequestDTO $paymentRequestDTO)
     {

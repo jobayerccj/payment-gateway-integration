@@ -5,10 +5,10 @@ namespace App\Adapter;
 
 use App\DTO\CardDTO;
 use App\DTO\PaymentResponseDTO;
-use App\Interface\PaymentAdapter;
+use App\Interface\PaymentProcessorAdapter;
 use DateTime;
 
-class AciPaymentAdapter implements PaymentAdapter
+class AciPaymentAdapter implements PaymentProcessorAdapter
 {
     public function convertPaymentDetailsToDTO($initialData): ?PaymentResponseDTO
     {

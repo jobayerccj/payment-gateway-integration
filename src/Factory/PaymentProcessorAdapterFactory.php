@@ -4,12 +4,12 @@ namespace App\Factory;
 
 use App\Adapter\AciPaymentAdapter;
 use App\Adapter\Shift4PaymentAdapter;
-use App\Interface\PaymentAdapter;
+use App\Interface\PaymentProcessorAdapter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PaymentAdapterFactory
+class PaymentProcessorAdapterFactory
 {
-    public static function getPaymentAdapter(string $paymentType): ?PaymentAdapter
+    public static function getPaymentAdapter(string $paymentType): ?PaymentProcessorAdapter
     {
         switch ($paymentType) {
             case 'shift4':

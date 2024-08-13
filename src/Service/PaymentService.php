@@ -4,34 +4,59 @@ namespace App\Service;
 
 use App\DTO\PaymentRequestDTO;
 use App\DTO\PaymentResponseDTO;
-use App\Factory\PaymentAdapterFactory;
-use App\Factory\PaymentMethodFactory;
+use App\Factory\PaymentProcessorAdapterFactory;
+use App\Factory\PaymentProcessorFactory;
 
 class PaymentService
 {
-    public function __construct(protected DataValidator $dataValidator)
-    {
+    public function __construct(
+        protected DataValidator $dataValidator,
+        protected PaymentProcessorFactory $paymentProcessorFactory,
+        protected PaymentProcessorAdapterFactory $paymentAdapterFactory
+    ){
     }
 
     public function processPayment(string $paymentType, array $request)
     {
-        $paymentRequestData = new PaymentRequestDTO();
-        $paymentRequestData
-            ->setPaymentType(isset($paymentType) ? $paymentType : '')
-            ->setAmount(isset($request['amount']) ? (float) $request['amount'] : 0)
-            ->setCurrency(isset($request['currency']) ? $request['currency'] : '')
-            ->setCardNumber(isset($request['cardNumber']) ? $request['cardNumber'] : '')
-            ->setCardExpYear(isset($request['cardExpYear']) ? (int) $request['cardExpYear'] : 2023)
-            ->setCardExpMonth(isset($request['cardExpMonth']) ? $request['cardExpMonth'] : '')
-            ->setCardCvv(isset($request['cardCvv']) ? $request['cardCvv'] : '')
-        ;
-
+        $paymentRequestData = $this->getPaymentRequestDTO($paymentType, $request);
         $this->dataValidator->validateData($paymentRequestData);
-        $paymentMethod = PaymentMethodFactory::getPaymentMethod($paymentType);
-        $initialData = $paymentMethod->initiatePayment($paymentRequestData);
-        $paymentMethodAdapter = PaymentAdapterFactory::getPaymentAdapter($paymentType);
+        $paymentProcessor = $this->paymentProcessorFactory->getPaymentProcessor($paymentType);
+        $initialData = $paymentProcessor->initiatePayment($paymentRequestData);
+        $paymentMethodAdapter = $this->paymentAdapterFactory->getPaymentAdapter($paymentType);
         $paymentDetails = $paymentMethodAdapter->convertPaymentDetailsToDTO($initialData);
         return $this->findPaymentResponse($paymentDetails);
+    }
+
+    private function getPaymentRequestDTO(string $paymentType, array $request)
+    {
+        $paymentRequestData = new PaymentRequestDTO();
+        $paymentRequestData->setPaymentType($paymentType);
+
+        if (isset($request['amount'])) {
+            $paymentRequestData->setAmount((float) $request['amount']);
+        }
+
+        if (isset($request['currency'])) {
+            $paymentRequestData->setCurrency($request['currency']);
+        }
+
+        if (isset($request['cardNumber'])) {
+            $paymentRequestData->setCardNumber($request['cardNumber']);
+        }
+
+        if (isset($request['cardExpYear'])) {
+            $paymentRequestData->setCardExpYear($request['cardExpYear']);
+        }
+
+        if (isset($request['cardExpMonth'])) {
+            $paymentRequestData->setCardExpMonth($request['cardExpMonth']);
+        }
+
+        if (isset($request['cardCvv'])) {
+            $paymentRequestData->setCardCvv($request['cardCvv']);
+        }
+
+        return $paymentRequestData;
     }
 
     private function findPaymentResponse(PaymentResponseDTO $paymentDetails): array
@@ -41,11 +66,7 @@ class PaymentService
             'dateOfCreating' => $paymentDetails->getDateOfCreating(),
             'amount' => $paymentDetails->getAmount(),
             'currency' => $paymentDetails->getCurrency(),
-            'cardDetails' => [
-                'cardBin' => $paymentDetails->getCardDetails()->getCardBin(),
-                'cardExpYear' => $paymentDetails->getCardDetails()->getCardExpYear(),
-                'cardExpMonth' => $paymentDetails->getCardDetails()->getCardExpMonth()
-            ]
+            'cardBin' => $paymentDetails->getCardDetails()->getCardBin(),
         ];
     }
 }

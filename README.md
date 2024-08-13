@@ -1,6 +1,6 @@
 Introduction
 ===========
-Payment gateway integration in a symfony project. Now it supports only shift4 & aci, gradually we will try to add more payment gateway. 
+This is a sample Symfony project where we are integrating payment gateways. Now it supports only shift4 & aci, gradually we will try to add more payment gateways. 
 
 Requirements
 ===========

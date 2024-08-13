@@ -2,20 +2,20 @@
 
 namespace App\Factory;
 
-use App\Interface\PaymentMethod;
-use App\PaymentMethod\AciPayment;
-use App\PaymentMethod\Shift4Payment;
+use App\Interface\PaymentProcessor;
+use App\PaymentProcessor\AciPaymentGateway;
+use App\PaymentProcessor\Shift4PaymentGateway;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PaymentMethodFactory
+class PaymentProcessorFactory
 {
-    public static function getPaymentMethod(string $paymentType): ?PaymentMethod
+    public function getPaymentProcessor(string $paymentType): ?PaymentProcessor
     {
         switch ($paymentType) {
             case 'shift4':
-                return new Shift4Payment();
+                return new Shift4PaymentGateway();
             case 'aci':
-                return new AciPayment();
+                return new AciPaymentGateway();
             default:
                 throw new NotFoundHttpException("Wrong payment type provided, only shift4 & aci are available now.");
         }
