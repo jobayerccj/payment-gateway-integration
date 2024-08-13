@@ -1,0 +1,16 @@
+services:
+  ubuntu:
+    container_name: dc.pgi_ubuntu
+    build:
+      context: ./.docker/ubuntu/
+    volumes:
+      - .:/var/www/html
+      - ./.docker/logs:/var/log/apache2
+    networks:
+      - pgi_network
+    ports:
+      - 127.0.0.1:8090:80
+      - 127.0.0.1:453:443
+
+networks:
+  pgi_network:

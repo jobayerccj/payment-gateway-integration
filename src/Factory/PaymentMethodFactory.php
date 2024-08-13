@@ -17,7 +17,7 @@ class PaymentMethodFactory
             case 'aci':
                 return new AciPayment();
             default:
-                throw new NotFoundHttpException("no payment method found");
+                throw new NotFoundHttpException("Wrong payment type provided, only shift4 & aci are available now.");
         }
     }
 }

@@ -7,6 +7,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class PaymentRequestDTO
 {
     #[Assert\NotBlank]
+    private string $paymentType;
+
+    #[Assert\NotBlank]
+    #[Assert\GreaterThan(0, message: 'amount is required & should be greater than 0.',)]
     private float $amount;
 
     #[Assert\NotBlank]
@@ -16,6 +20,7 @@ class PaymentRequestDTO
     private string $cardNumber;
 
     #[Assert\NotBlank]
+    #[Assert\GreaterThan(2023, message: 'cardExpYear is required & should be greater than 2024.',)]
     private int $cardExpYear;
 
     #[Assert\NotBlank]
@@ -23,6 +28,24 @@ class PaymentRequestDTO
 
     #[Assert\NotBlank]
     private string $cardCvv;
+
+    /**
+     * @return string
+     */
+    public function getPaymentType(): string
+    {
+        return $this->paymentType;
+    }
+
+    /**
+     * @param string $paymentType
+     */
+    public function setPaymentType(string $paymentType): self
+    {
+        $this->paymentType = $paymentType;
+
+        return $this;
+    }
 
     /**
      * @return float

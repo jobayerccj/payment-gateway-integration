@@ -6,6 +6,7 @@ use App\DTO\PaymentRequestDTO;
 use App\Interface\PaymentMethod;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AciPayment implements PaymentMethod
 {
@@ -39,7 +40,19 @@ class AciPayment implements PaymentMethod
 
             return json_decode($response->getBody()->getContents());
         } catch (RequestException $exc) {
-            throw new RequestException($exc->getMessage(), $exc->getRequest(), $exc->getResponse());
+            $errorDetails = json_decode($exc->getResponse()->getBody()->getContents());
+            $errors = $this->findRequestErrors($errorDetails->result->parameterErrors);
+            throw new RequestException($errors, $exc->getRequest(), $exc->getResponse());
         }
+    }
+
+    private function findRequestErrors(array $parameterErrors): string
+    {
+        $errorsDetails = "";
+        foreach ($parameterErrors as $key => $error) {
+            $errorsDetails .= sprintf("%d. %s %s ", $key+1, $error->name, $error->message);
+        }
+
+        return $errorsDetails;
     }
 }

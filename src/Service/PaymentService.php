@@ -15,26 +15,22 @@ class PaymentService
 
     public function processPayment(string $paymentType, array $request)
     {
-        // try catch handling
-        // use logger where needed
         $paymentRequestData = new PaymentRequestDTO();
         $paymentRequestData
-            ->setAmount((float)$request['amount'] ?? null)
-            ->setCurrency($request['currency'] ?? '')
-            ->setCardNumber($request['cardNumber'] ?? '')
-            ->setCardExpYear($request['cardExpYear'] ?? null)
-            ->setCardExpMonth($request['cardExpMonth'] ?? null)
-            ->setCardCvv($request['cardCvv'] ?? null)
+            ->setPaymentType(isset($paymentType) ? $paymentType : '')
+            ->setAmount(isset($request['amount']) ? (float) $request['amount'] : 0)
+            ->setCurrency(isset($request['currency']) ? $request['currency'] : '')
+            ->setCardNumber(isset($request['cardNumber']) ? $request['cardNumber'] : '')
+            ->setCardExpYear(isset($request['cardExpYear']) ? (int) $request['cardExpYear'] : 2023)
+            ->setCardExpMonth(isset($request['cardExpMonth']) ? $request['cardExpMonth'] : '')
+            ->setCardCvv(isset($request['cardCvv']) ? $request['cardCvv'] : '')
         ;
 
         $this->dataValidator->validateData($paymentRequestData);
         $paymentMethod = PaymentMethodFactory::getPaymentMethod($paymentType);
         $initialData = $paymentMethod->initiatePayment($paymentRequestData);
-        //dump($initialData);
-        //exit;
         $paymentMethodAdapter = PaymentAdapterFactory::getPaymentAdapter($paymentType);
         $paymentDetails = $paymentMethodAdapter->convertPaymentDetailsToDTO($initialData);
-        //dump($paymentDetails);
         return $this->findPaymentResponse($paymentDetails);
     }
 
