@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 #[Route('/api/v1')]
 class PaymentController extends BaseController
 {
-    public function __construct(private PaymentService $paymentService, private DataValidator $dataValidator, protected LoggerInterface $logger)
+    public function __construct(private readonly PaymentService $paymentService, private readonly DataValidator $dataValidator, protected LoggerInterface $logger)
     {
         parent::__construct($this->logger);
     }

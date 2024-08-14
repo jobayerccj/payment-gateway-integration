@@ -11,13 +11,10 @@ class PaymentProcessorFactory
 {
     public function getPaymentProcessor(string $paymentType): ?PaymentProcessor
     {
-        switch ($paymentType) {
-            case 'shift4':
-                return new Shift4PaymentGateway();
-            case 'aci':
-                return new AciPaymentGateway();
-            default:
-                throw new NotFoundHttpException("Wrong payment type provided, only shift4 & aci are available now.");
-        }
+        return match ($paymentType) {
+            'shift4' => new Shift4PaymentGateway(),
+            'aci' => new AciPaymentGateway(),
+            default => throw new NotFoundHttpException("Wrong payment type provided, only shift4 & aci are available now."),
+        };
     }
 }

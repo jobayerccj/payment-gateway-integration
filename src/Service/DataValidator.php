@@ -8,11 +8,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DataValidator
 {
-    public function __construct(private ValidatorInterface $validator)
+    public function __construct(private readonly ValidatorInterface $validator)
     {
     }
 
-    public function validateData($data)
+    public function validateData($data): void
     {
         $errors = $this->validator->validate($data);
         if (count($errors) > 0) {

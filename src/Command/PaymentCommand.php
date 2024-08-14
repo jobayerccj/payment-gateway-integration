@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 #[AsCommand(name: 'app:payment', description: 'Complete payment using payment gateways',)]
 class PaymentCommand extends Command
 {
-    public function __construct(private PaymentService $paymentService, private DataValidator $dataValidator)
+    public function __construct(private readonly PaymentService $paymentService, private readonly DataValidator $dataValidator)
     {
         parent::__construct();
     }

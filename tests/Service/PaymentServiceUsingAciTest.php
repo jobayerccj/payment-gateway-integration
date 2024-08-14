@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class PaymentServiceForAciTest extends KernelTestCase
+class PaymentServiceUsingAciTest extends KernelTestCase
 {
     private PaymentService $paymentService;
 
@@ -75,6 +75,7 @@ class PaymentServiceForAciTest extends KernelTestCase
 
     public static function paymentRequestsProvider(): array
     {
+        $requests = [];
         $dummyRequests = self::dummyPaymentRequests();
         foreach ($dummyRequests as $dummyRequest) {
            $requests[] = ['aci', $dummyRequest['data']];
@@ -85,6 +86,7 @@ class PaymentServiceForAciTest extends KernelTestCase
 
     public static function paymentRequestsProviderWithResult(): array
     {
+        $requests = [];
         $dummyRequests = self::dummyPaymentRequests();
         foreach ($dummyRequests as $dummyRequest) {
             $requests[] = ['aci', $dummyRequest['data'], $dummyRequest['totalViolations']];

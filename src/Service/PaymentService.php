@@ -16,7 +16,7 @@ class PaymentService
     ){
     }
 
-    public function processPayment(string $paymentType, array $request)
+    public function processPayment(string $paymentType, array $request): array
     {
         $paymentRequestData = $this->getPaymentRequestDTO($paymentType, $request);
         $this->dataValidator->validateData($paymentRequestData);
@@ -27,7 +27,7 @@ class PaymentService
         return $this->findPaymentResponse($paymentDetails);
     }
 
-    private function getPaymentRequestDTO(string $paymentType, array $request)
+    private function getPaymentRequestDTO(string $paymentType, array $request): PaymentRequestDTO
     {
         $paymentRequestData = new PaymentRequestDTO();
         $paymentRequestData->setPaymentType($paymentType);

@@ -1,15 +1,18 @@
 <?php
 
 namespace App\Adapter;
-;
 
 use App\DTO\CardDTO;
 use App\DTO\PaymentResponseDTO;
 use App\Interface\PaymentProcessorAdapter;
 use DateTime;
+use Exception;
 
 class AciPaymentAdapter implements PaymentProcessorAdapter
 {
+    /**
+     * @throws Exception
+     */
     public function convertPaymentDetailsToDTO($initialData): ?PaymentResponseDTO
     {
         $paymentResponseDTO = new PaymentResponseDTO();

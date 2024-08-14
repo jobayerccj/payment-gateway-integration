@@ -5,15 +5,22 @@ namespace App\PaymentProcessor;
 use App\DTO\PaymentRequestDTO;
 use App\Interface\PaymentProcessor;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 
 class AciPaymentGateway implements PaymentProcessor
 {
+    /**
+     * @throws GuzzleException
+     */
     public function initiatePayment(PaymentRequestDTO $paymentRequestDTO)
     {
         return $this->preAuthorizePayment($paymentRequestDTO);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function preAuthorizePayment(PaymentRequestDTO $paymentRequestDTO)
     {
         try {

@@ -11,13 +11,10 @@ class PaymentProcessorAdapterFactory
 {
     public static function getPaymentAdapter(string $paymentType): ?PaymentProcessorAdapter
     {
-        switch ($paymentType) {
-            case 'shift4':
-                return new Shift4PaymentAdapter();
-            case 'aci':
-                return new AciPaymentAdapter();
-            default:
-                throw new NotFoundHttpException("no payment adapter found");
-        }
+        return match ($paymentType) {
+            'shift4' => new Shift4PaymentAdapter(),
+            'aci' => new AciPaymentAdapter(),
+            default => throw new NotFoundHttpException("no payment adapter found"),
+        };
     }
 }
