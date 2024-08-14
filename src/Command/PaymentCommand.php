@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-#[AsCommand(name: 'app:payment', description: 'Complete payment using payment gateways',)]
+#[AsCommand(name: 'app:payment', description: 'Complete payment using payment gateways', )]
 class PaymentCommand extends Command
 {
     public function __construct(private readonly PaymentService $paymentService, private readonly DataValidator $dataValidator)
@@ -28,7 +28,7 @@ class PaymentCommand extends Command
         $this
             ->setHelp('This command allows you to complete your payment using shift4/aci.')
             ->addArgument('paymentType', InputArgument::REQUIRED, 'Payment Type (only shift4 or aci)')
-            ->addArgument('paymentData', InputArgument::IS_ARRAY|InputArgument::REQUIRED, 'pass details about your payment such as amount, currency, card details (number, exp year, exp month, cvv)')
+            ->addArgument('paymentData', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'Pass details about your payment such as amount, currency, card details (number, exp year, exp month, cvv)')
         ;
     }
 
@@ -48,16 +48,20 @@ class PaymentCommand extends Command
 
             $result = $this->paymentService->processPayment($paymentType, $processedData);
             $output->writeln(print_r($result, true));
+
             return Command::SUCCESS;
         } catch (ValidationFailedException $exc) {
             $errors = $this->dataValidator->processErrors($exc->getViolations());
             $io->error(json_encode($errors, JSON_PRETTY_PRINT));
+
             return Command::INVALID;
         } catch (NotFoundHttpException|RequestException $exc) {
             $io->error($exc->getMessage());
+
             return Command::INVALID;
         } catch (Shift4Exception $exc) {
-            $io->error("Wrong parameter passed, please check payment information");
+            $io->error('Wrong parameter passed, please check payment information');
+
             return Command::INVALID;
         }
     }

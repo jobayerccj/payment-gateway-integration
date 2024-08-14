@@ -27,7 +27,7 @@ class AciPaymentGateway implements PaymentProcessor
             $client = new Client(['base_uri' => 'https://eu-test.oppwa.com/v1/']);
             $response = $client->request('POST', 'payments', [
                 'form_params' => [
-                    'entityId' => "8a8294174b7ecb28014b9699220015ca",
+                    'entityId' => '8a8294174b7ecb28014b9699220015ca',
                     'amount' => $paymentRequestDTO->getAmount(),
                     'currency' => $paymentRequestDTO->getCurrency(),
                     'paymentBrand' => 'VISA',
@@ -36,10 +36,10 @@ class AciPaymentGateway implements PaymentProcessor
                     'card.holder' => 'Jane Jones',
                     'card.expiryMonth' => $paymentRequestDTO->getCardExpMonth(),
                     'card.expiryYear' => $paymentRequestDTO->getCardExpYear(),
-                    'card.cvv' => $paymentRequestDTO->getCardCvv()
+                    'card.cvv' => $paymentRequestDTO->getCardCvv(),
                 ],
                 'headers' => [
-                    'Authorization' => "Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg=",
+                    'Authorization' => 'Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg=',
                 ],
                 'verify' => false,
             ]);
@@ -54,9 +54,9 @@ class AciPaymentGateway implements PaymentProcessor
 
     private function findRequestErrors(array $parameterErrors): string
     {
-        $errorsDetails = "";
+        $errorsDetails = '';
         foreach ($parameterErrors as $key => $error) {
-            $errorsDetails .= sprintf("%d. %s %s ", $key+1, $error->name, $error->message);
+            $errorsDetails .= sprintf('%d. %s %s ', $key + 1, $error->name, $error->message);
         }
 
         return $errorsDetails;

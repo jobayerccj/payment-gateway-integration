@@ -2,12 +2,10 @@
 
 namespace App\DTO;
 
-use DateTime;
-
 class PaymentResponseDTO
 {
     private string $transactionId;
-    private DateTime $dateOfCreating;
+    private \DateTime $dateOfCreating;
     private float $amount;
     private string $currency;
     private CardDTO $cardDetails;
@@ -24,12 +22,12 @@ class PaymentResponseDTO
         return $this;
     }
 
-    public function getDateOfCreating(): DateTime
+    public function getDateOfCreating(): \DateTime
     {
         return $this->dateOfCreating;
     }
 
-    public function setDateOfCreating(DateTime $dateOfCreating): self
+    public function setDateOfCreating(\DateTime $dateOfCreating): self
     {
         $this->dateOfCreating = $dateOfCreating;
 

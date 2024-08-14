@@ -13,7 +13,7 @@ class PaymentService
         protected DataValidator $dataValidator,
         protected PaymentProcessorFactory $paymentProcessorFactory,
         protected PaymentProcessorAdapterFactory $paymentAdapterFactory
-    ){
+    ) {
     }
 
     public function processPayment(string $paymentType, array $request): array

@@ -21,11 +21,10 @@ class Shift4PaymentGateway implements PaymentProcessor
                 ->amount($paymentRequestDTO->getAmount())
                 ->currency($paymentRequestDTO->getCurrency())
                 ->card([
-                        'number' => $paymentRequestDTO->getCardNumber(),
-                        'expMonth' => $paymentRequestDTO->getCardExpMonth(),
-                        'expYear' => $paymentRequestDTO->getCardExpYear()
-                    ]
-                );
+                    'number' => $paymentRequestDTO->getCardNumber(),
+                    'expMonth' => $paymentRequestDTO->getCardExpMonth(),
+                    'expYear' => $paymentRequestDTO->getCardExpYear(),
+                ]);
 
             return $gateway->createCharge($chargeRequest);
         } catch (Shift4Exception $exc) {
