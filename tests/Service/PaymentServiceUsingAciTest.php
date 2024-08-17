@@ -2,12 +2,12 @@
 
 namespace App\Tests\Service;
 
-use App\Factory\PaymentProcessorAdapterFactory;
+use App\DTO\CardDTO;
+use App\DTO\PaymentResponseDTO;
 use App\Factory\PaymentProcessorFactory;
-use App\Interface\PaymentProcessor;
+use App\Interface\PaymentProcessorInterface;
 use App\Service\DataValidator;
 use App\Service\PaymentService;
-use stdClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -24,29 +24,25 @@ class PaymentServiceUsingAciTest extends KernelTestCase
         $validator = $container->get(ValidatorInterface::class);
         $dataValidator = new DataValidator($validator);
 
-        $paymentProcessorMock = $this->createMock(PaymentProcessor::class);
-        $initialData = new stdClass();
-        $initialData->id = "8ac7a4a0914aa6a001914d4fa2c43c5c";
-        $initialData->timestamp = "2024-08-13 19:57:52.259+0000";
-        $initialData->amount = 123.3;
-        $initialData->currency = "EUR";
-
-        $initialData->card = new stdClass();
-        $initialData->card->bin = "424242";
-        $initialData->card->expiryYear = 2032;
-        $initialData->card->expiryMonth = "05";
+        $paymentProcessorMock = $this->createMock(PaymentProcessorInterface::class);
+        $paymentDetails = new PaymentResponseDTO();
+        $paymentDetails->setTransactionId('8ac7a4a0914aa6a001914d4fa2c43c5c');
+        $paymentDetails->setDateOfCreating(new \DateTime('now'));
+        $paymentDetails->setAmount(123.3);
+        $paymentDetails->setCurrency('EUR');
+        $cardDTO = new CardDTO('424242', 2032, '05');
+        $paymentDetails->setCardDetails($cardDTO);
 
         $paymentProcessorMock
-            ->method('initiatePayment')
-            ->willReturn($initialData);
+            ->method('getPaymentDetails')
+            ->willReturn($paymentDetails);
 
         $paymentMethodFactoryMock = $this->createMock(PaymentProcessorFactory::class);
         $paymentMethodFactoryMock
             ->method('getPaymentProcessor')
             ->willReturn($paymentProcessorMock);
 
-        $paymentAdapterFactory = new PaymentProcessorAdapterFactory();
-        $this->paymentService = new PaymentService($dataValidator, $paymentMethodFactoryMock, $paymentAdapterFactory);
+        $this->paymentService = new PaymentService($dataValidator, $paymentMethodFactoryMock);
     }
 
     /**
@@ -69,6 +65,7 @@ class PaymentServiceUsingAciTest extends KernelTestCase
             $violations = $e->getViolations();
 
             $this->assertCount($expectedCount, $violations);
+
             return;
         }
     }
@@ -78,7 +75,7 @@ class PaymentServiceUsingAciTest extends KernelTestCase
         $requests = [];
         $dummyRequests = self::dummyPaymentRequests();
         foreach ($dummyRequests as $dummyRequest) {
-           $requests[] = ['aci', $dummyRequest['data']];
+            $requests[] = ['aci', $dummyRequest['data']];
         }
 
         return $requests;
@@ -103,10 +100,10 @@ class PaymentServiceUsingAciTest extends KernelTestCase
                     'currency' => 'EUR',
                     'cardNumber' => '4242424242424242',
                     'cardExpYear' => 2032,
-                    'cardExpMonth' => "12",
-                    'cardCvv' => "123"
+                    'cardExpMonth' => '12',
+                    'cardCvv' => '123',
                 ],
-                'totalViolations' => 1
+                'totalViolations' => 1,
             ],
             [
                 'data' => [
@@ -114,39 +111,39 @@ class PaymentServiceUsingAciTest extends KernelTestCase
                     'currency' => 'EUR',
                     'cardNumber' => '4242424242424242',
                     'cardExpYear' => 2032,
-                    'cardExpMonth' => "12",
-                    'cardCvv' => "123"
+                    'cardExpMonth' => '12',
+                    'cardCvv' => '123',
                 ],
-                'totalViolations' => 1
+                'totalViolations' => 1,
             ],
             [
                 'data' => [
                     'amount' => 'asd',
                     'cardNumber' => '4242424242424242',
                     'cardExpYear' => 2032,
-                    'cardExpMonth' => "12",
+                    'cardExpMonth' => '12',
                 ],
-                'totalViolations' => 3
+                'totalViolations' => 3,
             ],
             [
                 'data' => [
-                        'amount' => 564,
-                        'cardCvv' => "123"
-                    ],
-                'totalViolations' => 4
+                    'amount' => 564,
+                    'cardCvv' => '123',
+                ],
+                'totalViolations' => 4,
             ],
             [
                 'data' => [
                     'amount' => 564,
                     'currency' => 'EUR',
-                    'cardCvv' => "123"
+                    'cardCvv' => '123',
                 ],
-                'totalViolations' => 3
+                'totalViolations' => 3,
             ],
             [
                 'data' => [],
-                'totalViolations' => 6
-            ]
+                'totalViolations' => 6,
+            ],
         ];
     }
 
@@ -157,8 +154,8 @@ class PaymentServiceUsingAciTest extends KernelTestCase
             'currency' => 'EUR',
             'cardNumber' => '4242424242424242',
             'cardExpYear' => 2032,
-            'cardExpMonth' => "12",
-            'cardCvv' => "123"
+            'cardExpMonth' => '12',
+            'cardCvv' => '123',
         ];
 
         $response = $this->paymentService->processPayment('aci', $request);

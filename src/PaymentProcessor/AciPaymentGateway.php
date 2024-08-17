@@ -2,26 +2,30 @@
 
 namespace App\PaymentProcessor;
 
+use App\DTO\CardDTO;
 use App\DTO\PaymentRequestDTO;
-use App\Interface\PaymentProcessor;
+use App\DTO\PaymentResponseDTO;
+use App\Interface\PaymentProcessorInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 
-class AciPaymentGateway implements PaymentProcessor
+class AciPaymentGateway implements PaymentProcessorInterface
 {
     /**
      * @throws GuzzleException
      */
-    public function initiatePayment(PaymentRequestDTO $paymentRequestDTO)
+    public function getPaymentDetails(PaymentRequestDTO $paymentRequestDTO): ?PaymentResponseDTO
     {
-        return $this->preAuthorizePayment($paymentRequestDTO);
-    }
+        $initialData = $this->initiatePayment($paymentRequestDTO);
+        $paymentDetails = $this->convertPaymentDetailsToDTO($initialData);
 
+        return $paymentDetails;
+    }
     /**
      * @throws GuzzleException
      */
-    private function preAuthorizePayment(PaymentRequestDTO $paymentRequestDTO)
+    public function initiatePayment(PaymentRequestDTO $paymentRequestDTO)
     {
         try {
             $client = new Client(['base_uri' => 'https://eu-test.oppwa.com/v1/']);
@@ -52,6 +56,25 @@ class AciPaymentGateway implements PaymentProcessor
         }
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function convertPaymentDetailsToDTO($initialData): ?PaymentResponseDTO
+    {
+        $paymentResponseDTO = new PaymentResponseDTO();
+        $creatingDate = new \DateTime($initialData->timestamp);
+        $cardDetails = new CardDTO($initialData->card->bin, $initialData->card->expiryYear, $initialData->card->expiryMonth);
+        $paymentResponseDTO
+            ->setTransactionId($initialData->id)
+            ->setDateOfCreating($creatingDate)
+            ->setAmount((float) $initialData->amount)
+            ->setCurrency($initialData->currency)
+            ->setCardDetails($cardDetails)
+        ;
+
+        return $paymentResponseDTO;
+    }
+
     private function findRequestErrors(array $parameterErrors): string
     {
         $errorsDetails = '';
@@ -61,4 +84,5 @@ class AciPaymentGateway implements PaymentProcessor
 
         return $errorsDetails;
     }
+
 }

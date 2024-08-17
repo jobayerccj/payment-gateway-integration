@@ -4,15 +4,13 @@ namespace App\Service;
 
 use App\DTO\PaymentRequestDTO;
 use App\DTO\PaymentResponseDTO;
-use App\Factory\PaymentProcessorAdapterFactory;
 use App\Factory\PaymentProcessorFactory;
 
 class PaymentService
 {
     public function __construct(
         protected DataValidator $dataValidator,
-        protected PaymentProcessorFactory $paymentProcessorFactory,
-        protected PaymentProcessorAdapterFactory $paymentAdapterFactory
+        protected PaymentProcessorFactory $paymentProcessorFactory
     ) {
     }
 
@@ -21,9 +19,8 @@ class PaymentService
         $paymentRequestData = $this->getPaymentRequestDTO($paymentType, $request);
         $this->dataValidator->validateData($paymentRequestData);
         $paymentProcessor = $this->paymentProcessorFactory->getPaymentProcessor($paymentType);
-        $initialData = $paymentProcessor->initiatePayment($paymentRequestData);
-        $paymentMethodAdapter = $this->paymentAdapterFactory->getPaymentAdapter($paymentType);
-        $paymentDetails = $paymentMethodAdapter->convertPaymentDetailsToDTO($initialData);
+        $paymentDetails = $paymentProcessor->getPaymentDetails($paymentRequestData);
+
         return $this->findPaymentResponse($paymentDetails);
     }
 
